@@ -21,7 +21,8 @@ class SteamAPI {
         return rp.get('https://api.steampowered.com/IPlayerService/GetOwnedGames/v1', {
                 qs: {
                     key: this.key,
-                    steamid
+                    steamid,
+                    include_played_free_games: 1
                 },
                 json: true
             })
@@ -31,10 +32,10 @@ class SteamAPI {
     }
 }
 
-module.exports = (key=null) => {
+module.exports = (key = null) => {
     key = key || process.env.STEAM_API_KEY;
-    if(key == null) {
-        throw 'Steam API key must be provided as argument or in environment!'
+    if (key == null) {
+        throw 'Steam API key must be provided as argumen`t or in environment!'
     }
     return new SteamAPI(key);
 }
