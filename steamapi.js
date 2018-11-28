@@ -35,7 +35,7 @@ class SteamAPI {
 module.exports = (key = null) => {
     key = key || process.env.STEAM_API_KEY;
     if (key == null) {
-        throw 'Steam API key must be provided as argumen`t or in environment!'
+        throw 'Steam API key must be provided as argument or in environment!'
     }
     return new SteamAPI(key);
 }
