@@ -40,7 +40,6 @@ class SteamAPI {
     }
 
     getOwnedGames(steamid) {
-        console.log(typeof steamid)
         return new Promise((resolve, reject) => {
             request.get('https://api.steampowered.com/IPlayerService/GetOwnedGames/v1', {
                     qs: {
