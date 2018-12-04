@@ -18,24 +18,26 @@ class SteamAPI {
                     json: true
                 },
                 (error, response, body) => {
-                    if (error !== null) {
-                        reject(error);
-                    } else if (response !== null) {
-                        if (response.statusCode >= 400) {
-                            reject(Error(`HTTP Code ${response.statusCode}`));
-                        } else if (body !== null) {
-                            if (!body[appid].success) {
-                                reject(Error('Request unsuccessful: likely Invalid appid'));
-                            } else if (body[appid].data !== null) {
-                                resolve(body[appid].data);
-                            } else {
-                                reject(Error('API returned no data'))
-                            }
+                    try {
+                        if (body == null || !body[appid].success) {
+                            throw Error('Steam API: Invalid appid');
+                        } else {
+                            return resolve(body[appid].data);
                         }
-                    } else {
-                        reject(Error('No response'));
+                    } catch (e) {
+                        // TODO: Separate into function
+                        if (error != null) {
+                            return reject(Error(error.reason));
+                        }
+                        if (response == null) {
+                            return reject(Error(`Steam API: No response`));
+                        }
+                        if (response.headers["content-type"].indexOf('application/json') == -1) {
+                            return reject(Error('Steam API: Did not return JSON'));
+                        }
+                        return reject(e)
                     }
-                })
+                });
         })
     }
 
@@ -50,24 +52,25 @@ class SteamAPI {
                     json: true
                 },
                 (error, response, body) => {
-                    if (error !== null) {
-                        reject(error);
-                    } else if (response !== null) {
-                        if (response.statusCode >= 400) {
-                            reject(Error(`Steam API: Returned HTTP Code ${response.statusCode}`));
-                        } else if (body !== null) {
-                            if (Object.keys(body.response).length === 0) {
-                                reject(Error('Steam API: Request unsuccessful: likely invalid steamid'));
-                            } else if (body.response.games !== null) {
-                                resolve(body.response.games.map(game => game.appid));
-                            } else {
-                                reject(Error('Steam API: No data returned'));
-                            }
+                    try {
+                        if (body.response == null || body.response.games == null) {
+                            return reject(Error('Steam API: No data'));
+                        } else {
+                            return resolve(body.response.games.map(game => game.appid));
                         }
-                    } else {
-                        reject(Error('No response'));
+                    } catch (e) {
+                        // TODO: Separate into function
+                        if (error != null) {
+                            return reject(Error(error.reason));
+                        }
+                        if (response == null) {
+                            return reject(Error(`Steam API: No response`));
+                        }
+                        if (response.headers["content-type"].indexOf('application/json') === -1) {
+                            return reject(Error('Steam API: Did not return JSON'));
+                        }
+                        return reject(e)
                     }
-
                 });
         });
     }
