@@ -1,21 +1,21 @@
 {
-  "name": "steamapi",
+  "name": "steam-wrapper",
   "version": "1.0.0",
   "description": "",
-  "main": "steamapi.js",
+  "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/DacioRomero/SteamAPI.git"
+    "url": "git+https://github.com/DacioRomero/Steam-Wrapper.git"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/DacioRomero/SteamAPI/issues"
+    "url": "https://github.com/DacioRomero/Steam-Wrapper/issues"
   },
-  "homepage": "https://github.com/DacioRomero/SteamAPI#readme",
+  "homepage": "https://github.com/DacioRomero/Steam-Wrapper#readme",
   "dependencies": {
     "request": "^2.88.0"
   }

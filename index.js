@@ -1,7 +1,7 @@
 // utils/steam.js
 const request = require('request');
 
-class SteamAPI {
+class SteamWrapper {
     constructor(key) {
         this.key = key;
         this.Promise = Promise;
@@ -104,7 +104,7 @@ if (require.main === module) {
     });
 
     rl.question('Enter your Steam API key: ', key => {
-        const Steam = new SteamAPI(key);
+        const Steam = new SteamWrapper(key);
 
         Steam.GetAppDetails(440)
             .then(details => {
@@ -143,6 +143,6 @@ module.exports = (key = null) => {
     if (key == null) {
         throw Error('Steam API: Key must be provided as argument or in environment')
     } else {
-        return new SteamAPI(key);
+        return new SteamWrapper(key);
     }
 }
