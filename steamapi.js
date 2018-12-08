@@ -1,14 +1,14 @@
 // utils/steam.js
-const Promise = require('bluebird');
 const request = require('request');
 
 class SteamAPI {
     constructor(key) {
         this.key = key;
+        this.Promise = Promise;
     }
 
-    GetAppDetails(appid, filters = null) {
-        return new Promise((resolve, reject) => {
+    GetAppDetails(appid, filters = []) {
+        return new this.Promise((resolve, reject) => {
             request.get('https://store.steampowered.com/api/appdetails/', {
                     qs: {
                         appids: appid,
@@ -30,7 +30,7 @@ class SteamAPI {
     }
 
     GetOwnedGames(steamid, include_played_free_games = 1) {
-        return new Promise((resolve, reject) => {
+        return new this.Promise((resolve, reject) => {
             request.get('https://api.steampowered.com/IPlayerService/GetOwnedGames/v0001/', {
                     qs: {
                         key: this.key,
@@ -53,7 +53,7 @@ class SteamAPI {
     }
 
     GetPlayerSummaries(...steamids) {
-        return new Promise((resolve, reject) => {
+        return new this.Promise((resolve, reject) => {
             request.get('https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/', {
                     qs: {
                         key: this.key,

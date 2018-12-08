@@ -17,6 +17,6 @@
   },
   "homepage": "https://github.com/DacioRomero/SteamAPI#readme",
   "dependencies": {
-    "bluebird": "^3.5.3"
+    "request": "^2.88.0"
   }
 }
