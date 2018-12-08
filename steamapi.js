@@ -7,118 +7,94 @@ class SteamAPI {
         this.key = key;
     }
 
-    getAppDetails(appid, filters = null) {
+    GetAppDetails(appid, filters = null) {
         return new Promise((resolve, reject) => {
-            request.get('http://store.steampowered.com/api/appdetails', {
+            request.get('https://store.steampowered.com/api/appdetails/', {
                     qs: {
                         appids: appid,
-                        filters,
-                        format: 'json'
+                        filters: filters.join(',')
                     },
                     json: true
                 },
                 (error, response, body) => {
                     try {
-                        if (body == null || !body[appid].success) {
-                            throw Error('Steam API: Invalid appid');
-                        } else {
-                            return resolve(body[appid].data);
-                        }
+                        return resolve(body[appid].data);
                     } catch (e) {
-                        // TODO: Separate into function
-                        if (error != null) {
-                            return reject(Error(error.reason));
+                        if (body == null || !body[appid].success) {
+                            return reject(Error(`Steam API: appid ${appid} is invalid`))
                         }
-                        if (response == null) {
-                            return reject(Error(`Steam API: No response`));
-                        }
-                        if (response.headers["content-type"].indexOf('application/json') == -1) {
-                            return reject(Error('Steam API: Did not return JSON'));
-                        }
-                        return reject(e)
+                        reject(ErrorHandler(error, response, body, e));
                     }
                 });
         })
     }
 
-    getOwnedGames(steamid) {
+    GetOwnedGames(steamid, include_played_free_games = 1) {
         return new Promise((resolve, reject) => {
             request.get('https://api.steampowered.com/IPlayerService/GetOwnedGames/v0001/', {
                     qs: {
                         key: this.key,
                         steamid,
-                        include_played_free_games: 1
+                        include_played_free_games
                     },
                     json: true
                 },
                 (error, response, body) => {
                     try {
+                        resolve(body.response.games.map(game => game.appid));
+                    } catch (e) {
                         if (body.response == null || body.response.games == null) {
                             return reject(Error('Steam API: No data'));
-                        } else {
-                            return resolve(body.response.games.map(game => game.appid));
                         }
-                    } catch (e) {
-                        // TODO: Separate into function
-                        if (error != null) {
-                            return reject(Error(error.reason));
-                        }
-                        if (response == null) {
-                            return reject(Error(`Steam API: No response`));
-                        }
-                        if (response.headers["content-type"].indexOf('application/json') === -1) {
-                            return reject(Error('Steam API: Did not return JSON'));
-                        }
-                        return reject(e)
+                        reject(ErrorHandler(error, response, body, e));
                     }
                 });
         });
     }
 
-    getPlayerSummaries(...steamids) {
+    GetPlayerSummaries(...steamids) {
         return new Promise((resolve, reject) => {
             request.get('https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/', {
-                qs: {
-                    key: this.key,
-                    steamids: steamids.join(',')
+                    qs: {
+                        key: this.key,
+                        steamids: steamids.join(',')
+                    },
+                    json: true
                 },
-                json: true
-            },
-            (error, response, body) => {
-                try {
-                    // Convert to object for id indexing
-                    const players = body.response.players.reduce((obj, player) => {
-                        obj[player.steamid] = player;
-                        return obj;
-                    }, {})
+                (error, response, body) => {
+                    try {
+                        // Convert to object for id indexing
+                        const players = body.response.players.reduce((obj, player) =>
+                            Object.assign({}, obj, {
+                                [player.steamid]: player
+                            }), {})
 
-                    return resolve(players);
-                }
-                catch (e) {
-                    if (error != null) {
-                        return reject(Error(error.reason));
+                        return resolve(players);
+                    } catch (e) {
+                        reject(ErrorHandler(error, response, body, e));
                     }
-                    if (response == null) {
-                        return reject(Error(`Steam API: No response`));
-                    }
-                    if (response.headers["content-type"].indexOf('application/json') === -1) {
-                        return reject(Error('Steam API: Did not return JSON'));
-                    }
-                    return reject(e);
-                }
-            });
+                });
         });
     }
 }
 
-module.exports = (key = null) => {
-    key = key || process.env.STEAM_API_KEY;
-
-    if (typeof key === undefined) {
-        throw 'Steam API key must be provided as argument or in environment!'
-    } else {
-        return new SteamAPI(key);
+function ErrorHandler(error, response, body, e) {
+    if (error != null) {
+        return Error(`Steam API: ${error.reason}`);
     }
+
+    if (response == null) {
+        return Error('Steam API: No response');
+    }
+
+    switch(response.statusCode) {
+        case 403:
+            return Error('Steam API: Invalid key');
+        case 500:
+            return Error('Steam API: Server error, check input')
+    }
+
+    return e;
 }
 
 if (require.main === module) {
@@ -128,32 +104,45 @@ if (require.main === module) {
     });
 
     rl.question('Enter your Steam API key: ', key => {
-        const steam = new SteamAPI(key);
+        const Steam = new SteamAPI(key);
 
-        steam.getAppDetails(440)
+        Steam.GetAppDetails(440)
             .then(details => {
-                console.log('steam.getAppDetails works!');
-            })
-            .catch(error => {
-                console.log(error);
-            });
-        steam.getOwnedGames('76561198045036427')
-            .then(games => {
-                console.log('steam.getOwnedGames works!');
+                console.log('Steam.GetAppDetails');
+                console.log(Object.keys(details));
             })
             .catch(error => {
                 console.log(error);
             });
 
-        steam.getPlayerSummaries('76561198045036427', '76561198051193865')
+        Steam.GetOwnedGames('76561198045036427')
+            .then(games => {
+                console.log('Steam.GetOwnedGames');
+                console.log(games);
+            })
+            .catch(error => {
+                console.log(error);
+            });
+
+        Steam.GetPlayerSummaries('76561198045036427', '76561198051193865')
             .then(summaries => {
-                console.log('steam.getPlayerSummaries')
-                console.log(summaries);
+                console.log('Steam.GetPlayerSummaries')
+                console.log(Object.keys(summaries));
             })
             .catch(error => {
                 console.error(error);
-            })
+            });
 
         rl.close();
     });
+}
+
+module.exports = (key = null) => {
+    key = key || process.env.STEAM_API_KEY;
+
+    if (key == null) {
+        throw Error('Steam API: Key must be provided as argument or in environment')
+    } else {
+        return new SteamAPI(key);
+    }
 }
