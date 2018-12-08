@@ -1,0 +1,22 @@
+{
+  "name": "steamapi",
+  "version": "1.0.0",
+  "description": "",
+  "main": "steamapi.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DacioRomero/SteamAPI.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/DacioRomero/SteamAPI/issues"
+  },
+  "homepage": "https://github.com/DacioRomero/SteamAPI#readme",
+  "dependencies": {
+    "bluebird": "^3.5.3"
+  }
+}
