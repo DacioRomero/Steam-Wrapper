@@ -43,7 +43,7 @@ class SteamAPI {
 
     getOwnedGames(steamid) {
         return new Promise((resolve, reject) => {
-            request.get('https://api.steampowered.com/IPlayerService/GetOwnedGames/v1', {
+            request.get('https://api.steampowered.com/IPlayerService/GetOwnedGames/v0001/', {
                     qs: {
                         key: this.key,
                         steamid,
@@ -72,6 +72,41 @@ class SteamAPI {
                         return reject(e)
                     }
                 });
+        });
+    }
+
+    getPlayerSummaries(...steamids) {
+        return new Promise((resolve, reject) => {
+            request.get('https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/', {
+                qs: {
+                    key: this.key,
+                    steamids: steamids.join(',')
+                },
+                json: true
+            },
+            (error, response, body) => {
+                try {
+                    // Convert to object for id indexing
+                    const players = body.response.players.reduce((obj, player) => {
+                        obj[player.steamid] = player;
+                        return obj;
+                    }, {})
+
+                    return resolve(players);
+                }
+                catch (e) {
+                    if (error != null) {
+                        return reject(Error(error.reason));
+                    }
+                    if (response == null) {
+                        return reject(Error(`Steam API: No response`));
+                    }
+                    if (response.headers["content-type"].indexOf('application/json') === -1) {
+                        return reject(Error('Steam API: Did not return JSON'));
+                    }
+                    return reject(e);
+                }
+            });
         });
     }
 }
@@ -109,6 +144,15 @@ if (require.main === module) {
             .catch(error => {
                 console.log(error);
             });
+
+        steam.getPlayerSummaries('76561198045036427', '76561198051193865')
+            .then(summaries => {
+                console.log('steam.getPlayerSummaries')
+                console.log(summaries);
+            })
+            .catch(error => {
+                console.error(error);
+            })
 
         rl.close();
     });
