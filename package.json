@@ -1,6 +1,6 @@
 {
   "name": "steam-wrapper",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -17,6 +17,11 @@
   },
   "homepage": "https://github.com/DacioRomero/Steam-Wrapper#readme",
   "dependencies": {
-    "request": "^2.88.0"
+    "axios": "^0.18.0"
+  },
+  "devDependencies": {
+    "eslint": "^5.15.3",
+    "eslint-config-airbnb-base": "^13.1.0",
+    "eslint-plugin-import": "^2.16.0"
   }
 }
