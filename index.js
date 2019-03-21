@@ -6,47 +6,85 @@ class SteamWrapper {
   }
 
   static async GetAppDetails(appid, filters = []) {
-    const res = await axios.get('https://store.steampowered.com/api/appdetails/', {
-      params: {
-        appids: appid,
-        filters: filters.join(','),
-      },
-    });
+    let result = null;
 
-    return res.data;
+    try {
+      const res = await axios.get('https://store.steampowered.com/api/appdetails/', {
+        params: {
+          appids: appid,
+          filters: filters.join(','),
+        },
+      });
+
+      const { data } = res;
+
+      if (data) {
+        const { [appid]: app } = data;
+
+        if (app.success) {
+          result = app.data;
+        }
+      }
+    } finally {
+      // Continue to return null;
+    }
+
+    return result;
   }
 
   async GetOwnedGames(steamid, include_played_free_games = 1) {
-    const res = await axios.get('https://api.steampowered.com/IPlayerService/GetOwnedGames/v1/', {
-      params: {
-        key: this.key,
-        steamid,
-        include_played_free_games,
-      },
-    });
+    let result = null;
 
-    const { games } = res.data.response;
+    try {
+      const res = await axios.get('https://api.steampowered.com/IPlayerService/GetOwnedGames/v1/', {
+        params: {
+          key: this.key,
+          steamid,
+          include_played_free_games,
+        },
+      });
 
-    return games.map(game => game.appid);
+      const { response } = res.data;
+
+      if (Object.keys(response)) {
+        result = response.games.map(game => game.appid);
+      }
+    } finally {
+      // Continue to return null
+    }
+
+    return result;
   }
 
   async GetPlayerSummaries(...steamids) {
-    const res = await axios.get('https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v2/', {
-      params: {
-        key: this.key,
-        steamids: steamids.join(','),
-      },
-    });
+    let result = null;
 
-    let { players } = res.data.response;
+    try {
+      const res = await axios.get('https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v2/', {
+        params: {
+          key: this.key,
+          steamids: steamids.join(','),
+        },
+      });
 
-    players = players.reduce(
-      (obj, player) => Object.assign({}, obj, {
-        [player.steamid]: player,
-      }), {},
-    );
+      let { players } = res.data.response;
 
-    return players;
+      const defaults = steamids.reduce((prev, id) => (
+        { ...prev, [id]: null }
+      ), {});
+
+      players = players.reduce((prev, player) => {
+        const { steamid, newPlayer } = player;
+
+        return { ...prev, [steamid]: newPlayer };
+      });
+
+      result = { ...defaults, ...players };
+    } finally {
+      // Continue
+    }
+
+    return result;
   }
 }
 
