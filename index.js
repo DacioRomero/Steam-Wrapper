@@ -25,7 +25,7 @@ class SteamWrapper {
           result = app.data;
         }
       }
-    } finally {
+    } catch (err) {
       // Continue to return null;
     }
 
@@ -49,7 +49,7 @@ class SteamWrapper {
       if (Object.keys(response)) {
         result = response.games.map(game => game.appid);
       }
-    } finally {
+    } catch (err) {
       // Continue to return null
     }
 
@@ -80,7 +80,7 @@ class SteamWrapper {
       });
 
       result = { ...defaults, ...players };
-    } finally {
+    } catch (err) {
       // Continue
     }
 
