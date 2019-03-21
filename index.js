@@ -74,10 +74,10 @@ class SteamWrapper {
       ), {});
 
       players = players.reduce((prev, player) => {
-        const { steamid, newPlayer } = player;
+        const { steamid, ...newPlayer } = player;
 
         return { ...prev, [steamid]: newPlayer };
-      });
+      }, {});
 
       result = { ...defaults, ...players };
     } catch (err) {
