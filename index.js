@@ -4,6 +4,7 @@ const bigpicture = axios.create({
   baseURL: 'https://store.steampowered.com/api/',
 });
 
+// Modifed verison of https://stackoverflow.com/a/37016639
 const urlRe = /(?:https?:\/\/)?steamcommunity\.com\/(?:profiles|id)\/([^/?]+)/;
 const steamidRe = /\d{17}/;
 
