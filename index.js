@@ -1,44 +1,41 @@
-const axios = require('axios');
+const axios = require('axios').default;
+
+const bigpicture = axios.create({
+  baseURL: 'https://store.steampowered.com/api/',
+});
+
+const urlRe = /(?:https?:\/\/)?steamcommunity\.com\/(?:profiles|id)\/([a-zA-Z0-9]+)/;
+const steamidRe = /\d{17}/;
 
 class SteamWrapper {
   constructor(key) {
-    this.key = key;
+    this.steampowered = axios.create({
+      baseURL: 'https://api.steampowered.com/',
+      params: { key },
+    });
   }
 
   static async GetAppDetails(appid, filters = []) {
-    let result = null;
-
     try {
-      const res = await axios.get('https://store.steampowered.com/api/appdetails/', {
+      const res = await bigpicture.get('/appdetails/', {
         params: {
           appids: appid,
           filters: filters.join(','),
         },
       });
 
-      const { data } = res;
-
-      if (data) {
-        const { [appid]: app } = data;
-
-        if (app.success) {
-          result = app.data;
-        }
-      }
+      return res.data[appid].data;
     } catch (err) {
       // Continue to return null;
     }
 
-    return result;
+    return null;
   }
 
   async GetOwnedGames(steamid, include_played_free_games = 1) {
-    let result = null;
-
     try {
-      const res = await axios.get('https://api.steampowered.com/IPlayerService/GetOwnedGames/v1/', {
+      const res = await this.steampowered.get('/IPlayerService/GetOwnedGames/v1/', {
         params: {
-          key: this.key,
           steamid,
           include_played_free_games,
         },
@@ -46,25 +43,18 @@ class SteamWrapper {
 
       const { response } = res.data;
 
-      if (Object.keys(response)) {
-        result = response.games.map(game => game.appid);
-      }
+      return response.games.map(game => game.appid);
     } catch (err) {
       // Continue to return null
     }
 
-    return result;
+    return null;
   }
 
   async GetPlayerSummaries(...steamids) {
-    let result = null;
-
     try {
-      const res = await axios.get('https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v2/', {
-        params: {
-          key: this.key,
-          steamids: steamids.join(','),
-        },
+      const res = await this.steampowered.get('/ISteamUser/GetPlayerSummaries/v2/', {
+        params: { steamids: steamids.join(',') },
       });
 
       let { players } = res.data.response;
@@ -79,21 +69,42 @@ class SteamWrapper {
         return { ...prev, [steamid]: newPlayer };
       }, {});
 
-      result = { ...defaults, ...players };
+      return { ...defaults, ...players };
     } catch (err) {
       // Continue
     }
 
-    return result;
+    return null;
+  }
+
+  async GetSteamId64(input) {
+    const urlMatch = urlRe.exec(input);
+    let profile;
+
+    if (urlMatch) {
+      [, profile] = urlMatch;
+    } else {
+      profile = input;
+    }
+
+    const steamidMatch = steamidRe.exec(profile);
+
+    if (steamidMatch) {
+      return steamidMatch[0];
+    }
+
+    try {
+      const res = await this.steampowered.get('/ISteamUser/ResolveVanityURL/v1/', {
+        params: { vanityurl: profile },
+      });
+
+      return res.data.response.steamid;
+    } catch (err) {
+      // Continue
+    }
+
+    return null;
   }
 }
 
-module.exports = (userKey = null) => {
-  const key = userKey || process.env.STEAM_API_KEY;
-
-  if (key == null) {
-    throw Error('Steam API: Key must be provided as argument or in environment');
-  } else {
-    return new SteamWrapper(key);
-  }
-};
+module.exports = SteamWrapper;
