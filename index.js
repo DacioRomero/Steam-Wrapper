@@ -4,7 +4,7 @@ const bigpicture = axios.create({
   baseURL: 'https://store.steampowered.com/api/',
 });
 
-const urlRe = /(?:https?:\/\/)?steamcommunity\.com\/(?:profiles|id)\/([a-zA-Z0-9]+)(?:\/?.*)?$/;
+const urlRe = /(?:https?:\/\/)?steamcommunity\.com\/(?:profiles|id)\/([^/?]+)/;
 const steamidRe = /\d{17}/;
 
 class SteamWrapper {
