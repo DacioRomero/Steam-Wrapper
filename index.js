@@ -4,7 +4,7 @@ const bigpicture = axios.create({
   baseURL: 'https://store.steampowered.com/api/',
 });
 
-const urlRe = /(?:https?:\/\/)?steamcommunity\.com\/(?:profiles|id)\/([a-zA-Z0-9]+)/;
+const urlRe = /(?:https?:\/\/)?steamcommunity\.com\/(?:profiles|id)\/([a-zA-Z0-9]+)(?:\/?.*)?$/;
 const steamidRe = /\d{17}/;
 
 class SteamWrapper {
@@ -32,12 +32,12 @@ class SteamWrapper {
     return null;
   }
 
-  async GetOwnedGames(steamid, include_played_free_games = 1) {
+  async GetOwnedGames(steamid, includeFree = 1) {
     try {
       const res = await this.steampowered.get('/IPlayerService/GetOwnedGames/v1/', {
         params: {
           steamid,
-          include_played_free_games,
+          include_played_free_games: includeFree,
         },
       });
 
