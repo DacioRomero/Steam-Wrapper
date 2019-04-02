@@ -1,9 +1,9 @@
 # Steam Wrapper
 
-A simple Steam API wrapper using Promises.
+A simple wrapper for Steam's API endpoints
 
 # Install
 
 ```sh
-$ npm install DacioRomero/Steam-Wrapper
+$ npm install @dacio/steam-wrapper
 ```
