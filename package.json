@@ -2,9 +2,11 @@
   "name": "@dacio/steam-wrapper",
   "version": "3.0.2",
   "description": "A simple wrapper for Steam's API endpoints",
-  "main": "index.js",
+  "main": "dist/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "babel src --out-dir dist",
+    "lint": "eslint src test"
   },
   "repository": {
     "type": "git",
@@ -20,8 +22,15 @@
     "axios": "^0.18.0"
   },
   "devDependencies": {
-    "eslint": "^5.15.3",
+    "@babel/cli": "^7.2.3",
+    "@babel/core": "^7.4.0",
+    "@babel/preset-env": "^7.4.2",
+    "babel-plugin-add-module-exports": "^1.0.0",
+    "eslint": "^5.16.0",
     "eslint-config-airbnb-base": "^13.1.0",
     "eslint-plugin-import": "^2.16.0"
-  }
+  },
+  "files": [
+    "dist/"
+  ]
 }

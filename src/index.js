@@ -1,4 +1,4 @@
-const axios = require('axios').default;
+import axios from 'axios';
 
 const bigpicture = axios.create({
   baseURL: 'https://store.steampowered.com/api/',
@@ -108,4 +108,4 @@ class SteamWrapper {
   }
 }
 
-module.exports = SteamWrapper;
+export default SteamWrapper;
