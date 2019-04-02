@@ -1,6 +1,6 @@
 {
   "name": "@dacio/steam-wrapper",
-  "version": "3.1.2",
+  "version": "3.1.3",
   "description": "A simple wrapper for Steam's API endpoints",
   "main": "dist/index.js",
   "scripts": {
