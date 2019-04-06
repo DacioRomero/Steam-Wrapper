@@ -1,0 +1,26 @@
+{
+  "response": {
+    "players": [
+      {
+        "steamid": "76561198045036427",
+        "communityvisibilitystate": 3,
+        "profilestate": 1,
+        "personaname": "Dacio",
+        "lastlogoff": 1554363208,
+        "commentpermission": 1,
+        "profileurl": "https://steamcommunity.com/id/DacioRomero/",
+        "avatar": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/avatars/17/1729591dbd4672694455d0a5af8019c08a2bf9b8.jpg",
+        "avatarmedium": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/avatars/17/1729591dbd4672694455d0a5af8019c08a2bf9b8_medium.jpg",
+        "avatarfull": "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/avatars/17/1729591dbd4672694455d0a5af8019c08a2bf9b8_full.jpg",
+        "personastate": 1,
+        "realname": "Dacio Romero",
+        "primaryclanid": "103582791433900329",
+        "timecreated": 1310239571,
+        "personastateflags": 0,
+        "loccountrycode": "US",
+        "locstatecode": "CA",
+        "loccityid": 511
+      }
+    ]
+  }
+}
