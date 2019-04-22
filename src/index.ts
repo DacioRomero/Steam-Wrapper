@@ -1,4 +1,4 @@
-import axios, { AxiosInstance } from 'axios';
+import axios, { AxiosInstance, AxiosResponse } from 'axios';
 
 import keyBy from 'lodash.keyby';
 import zipObject from 'lodash.zipobject';
@@ -55,35 +55,40 @@ export interface PlayerSummary {
   loccityid?: number;
 }
 
-interface PlayerSummariesData {
-  response: {
-    players: PlayerSummary[];
+interface PlayerSummariesResponse extends AxiosResponse {
+  data: {
+    response: {
+      players: PlayerSummary[];
+    };
   };
 }
 
-interface LibraryData {
-  response: {
-    game_count: number;
-    games: {
-      appid: number;
-      playtime_forever: number;
-    }[];
+interface OwnedGamesResponse extends AxiosResponse {
+  data: {
+    response: {
+      game_count: number;
+      games: {
+        appid: number;
+        playtime_forever: number;
+      }[];
+    };
   };
 }
 
-interface AppDetailsData {
-  [x: string]: {
+interface AppDetailsResponse extends AxiosResponse {
+  data: Record<string, {
     success: boolean;
-    // TODO: Create an interface for AppDetails
-    data: any;
-  };
+    data: any; // TODO: Create an interface for AppDetails
+  }>;
 }
 
-interface ResolveVanityURLData {
-  response: {
-    success: 1 | 42;
-    steamid?: string;
-    message?: string;
+interface ResolveVanityURLResponse extends AxiosResponse {
+  data: {
+    response: {
+      success: 1 | 42;
+      steamid?: string;
+      message?: string;
+    };
   };
 }
 
@@ -106,7 +111,7 @@ export default class SteamWrapper {
           data: details,
         },
       },
-    }: { data: AppDetailsData } = await bigpicture.get('/appdetails/', {
+    }: AppDetailsResponse = await bigpicture.get('/appdetails/', {
       params: {
         appids: appid,
         filters: filters.join(','),
@@ -123,7 +128,7 @@ export default class SteamWrapper {
   public async GetOwnedGames(steamid: string, includeFree: boolean = true): Promise<number[]> {
     const {
       data: { response: { games } },
-    }: { data: LibraryData } = await this.steampowered.get('/IPlayerService/GetOwnedGames/v1/', {
+    }: OwnedGamesResponse = await this.steampowered.get('/IPlayerService/GetOwnedGames/v1/', {
       params: {
         steamid,
         'include_played_free_games': Number(includeFree),
@@ -136,7 +141,7 @@ export default class SteamWrapper {
   public async GetPlayerSummaries(...steamids: string[]): Promise<Record<string, false | PlayerSummary>> {
     const {
       data: { response: { players } },
-    }: { data: PlayerSummariesData } = await this.steampowered.get('/ISteamUser/GetPlayerSummaries/v2/', {
+    }: PlayerSummariesResponse = await this.steampowered.get('/ISteamUser/GetPlayerSummaries/v2/', {
       params: { steamids: steamids.join(',') },
     });
 
@@ -163,7 +168,7 @@ export default class SteamWrapper {
           message,
         },
       },
-    }: { data: ResolveVanityURLData } = await this.steampowered.get('/ISteamUser/ResolveVanityURL/v1/', {
+    }: ResolveVanityURLResponse = await this.steampowered.get('/ISteamUser/ResolveVanityURL/v1/', {
       params: { vanityurl: profile },
     });
 

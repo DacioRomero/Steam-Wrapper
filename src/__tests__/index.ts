@@ -1,5 +1,5 @@
 import mockAxios from 'jest-mock-axios';
-import SteamWrapper from '../index';
+import SteamWrapper from '..';
 import { promises as fs } from 'fs';
 import { join } from 'path';
 
@@ -11,7 +11,6 @@ afterEach((): void => {
   mockAxios.reset();
 });
 
-console.log(__dirname);
 describe('GetAppDetails', (): void => {
   it('should return data', async (): Promise<void> => {
     const gameObj = JSON.parse(await fs.readFile(join(__dirname, './games/440.json'), 'utf-8'))
