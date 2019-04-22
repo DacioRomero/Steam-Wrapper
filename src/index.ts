@@ -55,6 +55,128 @@ export interface PlayerSummary {
   loccityid?: number;
 }
 
+export enum AppType {
+  Game = 'game',
+  DLC = 'dlc',
+  Demo = 'demo',
+  Advertising = 'advertising',
+  Mod = 'mod',
+  Video = 'video',
+}
+
+export enum AppControllerSupport {
+  Partial = 'partial',
+  Full = 'full',
+}
+
+// https://wiki.teamfortress.com/wiki/User:RJackson/StorefrontAPI#appdetails
+export interface AppDetails {
+  type: AppType;
+  name: string;
+  steam_appid: number;
+  required_age: number;
+  controller_support?: AppControllerSupport;
+  dlc?: number[];
+  detailed_description: string;
+  about_the_game: string;
+  short_description: string;
+  fullgame?: {
+    appid: string | null;
+    name: string;
+  };
+  supported_languages: string;
+  header_image: string;
+  website: string;
+  pc_requirements: {
+    minimum?: string;
+    recommended?: string;
+  } | [];
+  mac_requirements: {
+    minimum?: string;
+    recommended?: string;
+  } | [];
+  linux_requirements: {
+    minimum?: string;
+    recommended?: string;
+  } | [];
+  legal_notice?: string;
+  developers?: string[];
+  publishers: string[];
+  demos?: {
+    appid: number;
+    description: string;
+  }[];
+  price_overview?: {
+    currency: string;
+    initial: number;
+    final: number;
+    discount_percent: number;
+  };
+  packages: number[];
+  package_groups:  {
+    name: string;
+    title: string;
+    description: string;
+    selection_text: string;
+    save_text: string;
+    display_type: number;
+    is_recurring_subscription: string;
+    subs: {
+      packageid: number;
+      percent_savings_text: string;
+      percent_savings: number;
+      option_text: string;
+      option_description: string;
+    }[];
+  };
+  platforms: {
+    windows: boolean;
+    mac: boolean;
+    linux: boolean;
+  };
+  metacritic?: {
+    score: number;
+    url: string;
+  };
+  categories?: {
+    id: number;
+    description: string;
+  }[];
+  genres?: {
+    id: number;
+    description: string;
+  }[];
+  screenshots?: {
+    id: number;
+    path_thumbnail: string;
+    path_full: string;
+  }[];
+  movies?: {
+    id: number;
+    name: string;
+    thumbnail: string;
+    webm: {
+      '480': string;
+      max: string;
+    };
+    highlight: boolean;
+  };
+  recommendations?: {
+    total: number;
+  };
+  achievements?: {
+    total: number;
+    highlighted: {
+      name: string;
+      path: string;
+    }[];
+    release_date: {
+      coming_soon: boolean;
+      date: string;
+    };
+  };
+}
+
 interface PlayerSummariesResponse extends AxiosResponse {
   data: {
     response: {
@@ -78,7 +200,7 @@ interface OwnedGamesResponse extends AxiosResponse {
 interface AppDetailsResponse extends AxiosResponse {
   data: Record<string, {
     success: boolean;
-    data: any; // TODO: Create an interface for AppDetails
+    data: AppDetails;
   }>;
 }
 
@@ -107,8 +229,7 @@ export default class SteamWrapper {
     });
   }
 
-  // TODO: Create an interface for AppDetails
-  public static async GetAppDetails(appid: string, filters: string[] = []): Promise<any> {
+  public static async GetAppDetails(appid: string, filters: string[] = []): Promise<AppDetails> {
     const {
       data: {
         [appid]: {
