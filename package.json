@@ -4,7 +4,7 @@
   "description": "A simple wrapper for Steam's API endpoints",
   "main": "dist/index.js",
   "scripts": {
-    "test": "jest -c jest.config.json",
+    "test": "jest",
     "build": "tsc",
     "lint": "eslint . --ext .ts"
   },
