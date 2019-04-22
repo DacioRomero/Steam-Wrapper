@@ -38,5 +38,17 @@
   },
   "files": [
     "dist/"
+  ],
+  "keywords": [
+    "typescript",
+    "steam",
+    "api",
+    "wrapper",
+    "web",
+    "steamapi",
+    "steam-api",
+    "steam-wrapper",
+    "steamwrapper",
+    "dacio"
   ]
 }
