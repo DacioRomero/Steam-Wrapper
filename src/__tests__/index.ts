@@ -1,21 +1,21 @@
-import fs from 'fs';
-import path from 'path';
 import mockAxios from 'jest-mock-axios';
 import SteamWrapper from '..';
+import { promises as fs } from 'fs';
+import { join } from 'path';
 
 jest.mock('axios');
 
 const wrapper = new SteamWrapper('testkey');
 
-describe('GetAppDetails', () => {
-  afterEach(() => {
-    mockAxios.reset();
-  });
+afterEach((): void => {
+  mockAxios.reset();
+});
 
-  it('should return data', async () => {
-    const gameObj = JSON.parse(fs.readFileSync(path.join(__dirname, './games/440.json')));
+describe('GetAppDetails', (): void => {
+  it('should return data', async (): Promise<void> => {
+    const gameObj = JSON.parse(await fs.readFile(join(__dirname, './games/440.json'), 'utf-8'))
 
-    const promise = SteamWrapper.GetAppDetails(440);
+    const promise = SteamWrapper.GetAppDetails('440');
 
     mockAxios.mockResponse({
       data: gameObj,
@@ -23,13 +23,13 @@ describe('GetAppDetails', () => {
 
     const result = await promise;
 
-    expect(result).toEqual(gameObj[440].data);
+    expect(result).toEqual(gameObj['440'].data);
   });
 
-  it('should throw an error', async () => {
-    const gameObj = JSON.parse(fs.readFileSync(path.join(__dirname, './games/1.json')));
+  it('should throw an error', async (): Promise<void> => {
+    const gameObj = JSON.parse(await fs.readFile(join(__dirname, './games/1.json'), 'utf-8'))
 
-    const promise = SteamWrapper.GetAppDetails(1);
+    const promise = SteamWrapper.GetAppDetails('1');
 
     mockAxios.mockResponse({
       data: gameObj,
@@ -39,9 +39,9 @@ describe('GetAppDetails', () => {
   });
 });
 
-describe('GetOwnedGames', () => {
-  it('should return an array of ids', async () => {
-    const libJson = JSON.parse(fs.readFileSync(path.join(__dirname, './libraries/76561198045036427.json')));
+describe('GetOwnedGames', (): void => {
+  it('should return an array of ids', async (): Promise<void> => {
+    const libJson = JSON.parse(await fs.readFile(join(__dirname, './libraries/76561198045036427.json'), 'utf-8'))
 
     const promise = wrapper.GetOwnedGames('76561198045036427');
 
@@ -51,13 +51,13 @@ describe('GetOwnedGames', () => {
 
     const result = await promise;
 
-    expect(result).toEqual(libJson.response.games.map(game => game.appid));
+    expect(result).toEqual((libJson.response.games as {appid: string}[]).map((game): string => game.appid));
   });
 });
 
-describe('GetPlayerSummaries', () => {
-  it('should return profile', async () => {
-    const profileObj = JSON.parse(fs.readFileSync(path.join(__dirname, './profiles/76561198045036427.json')));
+describe('GetPlayerSummaries', (): void => {
+  it('should return profile', async (): Promise<void> => {
+    const profileObj = JSON.parse(await fs.readFile(join(__dirname, './profiles/76561198045036427.json'), 'utf-8'))
 
     const promise = wrapper.GetPlayerSummaries('76561198045036427');
 
@@ -74,20 +74,20 @@ describe('GetPlayerSummaries', () => {
   });
 });
 
-describe('GetSteamId64', () => {
-  it('should resolve steamid', async () => {
+describe('GetSteamId64', (): void => {
+  it('should resolve steamid', async (): Promise<void> => {
     const result = await wrapper.GetSteamId64('76561198045036427');
 
     expect(result).toEqual('76561198045036427');
   });
 
-  it('should resolve normal url', async () => {
+  it('should resolve normal url', async (): Promise<void> => {
     const result = await wrapper.GetSteamId64('https://steamcommunity.com/profiles/76561198051193865');
 
     expect(result).toEqual('76561198051193865');
   });
 
-  it('should resolve vanity url', async () => {
+  it('should resolve vanity url', async (): Promise<void> => {
     const promise = wrapper.GetSteamId64('https://steamcommunity.com/id/DacioRomero/');
 
     mockAxios.mockResponse({
@@ -104,7 +104,7 @@ describe('GetSteamId64', () => {
     expect(result).toEqual('76561198045036427');
   });
 
-  it('should throw error', async () => {
+  it('should throw error', async (): Promise<void> => {
     const promise = wrapper.GetSteamId64('https://steamcommunity.com/id/DacioR/');
 
     mockAxios.mockResponse({
