@@ -82,10 +82,15 @@ interface AppDetailsResponse extends AxiosResponse {
   }>;
 }
 
+enum ResolveVanityURLSucceeded {
+  Yes = 1,
+  No = 42,
+}
+
 interface ResolveVanityURLResponse extends AxiosResponse {
   data: {
     response: {
-      success: 1 | 42;
+      success: ResolveVanityURLSucceeded;
       steamid?: string;
       message?: string;
     };
@@ -172,7 +177,7 @@ export default class SteamWrapper {
       params: { vanityurl: profile },
     });
 
-    if (success === 1) {
+    if (success === ResolveVanityURLSucceeded.Yes) {
       return steamid as string;
     }
 
