@@ -1,7 +1,10 @@
 # Steam Wrapper
 
-[![pipeline status](https://gitlab.com/dacio/steam-wrapper/badges/master/pipeline.svg)](https://gitlab.com/dacio/steam-wrapper/commits/master)
-[![coverage report](https://gitlab.com/dacio/steam-wrapper/badges/master/coverage.svg)](https://gitlab.com/dacio/steam-wrapper/commits/master)
+![npm bundle size (scoped)](https://img.shields.io/bundlephobia/min/@dacio/steam-wrapper)
+![npm (scoped)](https://img.shields.io/npm/v/@dacio/steam-wrapper)
+![GitHub](https://img.shields.io/github/license/dacioromero/steam-wrapper)
+![GitHub top language](https://img.shields.io/github/languages/top/dacioromero/steam-wrapper)
+![GitHub Workflow Status (branch)](https://img.shields.io/github/workflow/status/dacioromero/steam-wrapper/publish/master)
 
 A simple wrapper for Steam's API endpoints
 

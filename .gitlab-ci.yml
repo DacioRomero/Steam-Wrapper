@@ -1,5 +1,0 @@
-variables:
-  PKG_MNGR: yarn
-
-include:
-  remote: https://gitlab.com/snippets/1841312/raw.yml

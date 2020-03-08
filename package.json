@@ -8,16 +8,9 @@
     "build": "tsc",
     "lint": "eslint . --ext .ts"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://gitlab.com/dacio/steam-wrapper.git"
-  },
+  "repository": "github:dacio/steam-wrapper",
   "author": "Dacio Romero <dacioromero@gmail.com> (dacio.dev)",
   "license": "MIT",
-  "bugs": {
-    "url": "https://gitlab.com/dacio/steam-wrapper/issues"
-  },
-  "homepage": "https://gitlab.com/dacio/steam-wrapper#readme",
   "dependencies": {
     "axios": "^0.18.0",
     "lodash.keyby": "^4.6.0",
